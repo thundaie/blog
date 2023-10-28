@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
+    <title>Blog</title>
+    <script>
+      function goPage(page) {
+        var searchParams = new URLSearchParams(window.location.search);
+        searchParams.set("page", page);
+        window.location.search = searchParams.toString();
+      }
+    </script>
+</head>
+<body>
+    <%- include("_navbar") %>
+      
+    <div class="container">
+      <% if(typeof user != "undefined" && user) { %>
+          <h1 class="mb-4 mt-3">My Blogs</h1>
+        <% } else { %>
+          <h1 class="mb-4 mt-3">All Blogs</h1>
+      <% } %>
+    </div>
+
+    <div class="container">
+      <form method="GET">
+        <div class="form-group row">
+          <div class="col-auto">
+            <input type="text" class="form-control mb-2" placeholder="Title" name="title" value="<%= search.title %>"/>
+          </div>
+          <div class="col-auto">
+            <input type="text" class="form-control mb-2" placeholder="Tag" name="tag" value="<%= search.tag %>">
+          </div>
+
+          <% if(typeof user == "undefined") { %>    
+          <div class="col-auto">
+            <input type="text" class="form-control mb-2" placeholder="Author ID" name="author" value="<%= search.author %>"/>
+          </div>
+          <% } %>
+
+          <% if(typeof user != "undefined" && user) { %>
+            <div class="col-auto">
+            <select class="form-select" id="state" name="state" value="<%= search.state %>">
+              <option value="">View All</option>
+              <option value="draft" <% if(search.state == "draft") { %>selected <% } %>>Only Draft</option>
+              <option value="published" <% if(search.state == "published") { %>selected <% } %>>Only Published</option>
+            </select>
+          </div>
+          <% } %>
+
+          <div class="col-auto">
+            <select class="form-select" id="orderBy" name="orderBy">
+              <option value="timestampDesc" <% if(search.orderBy == "timestampDesc") { %>selected <% } %>>Order by Timestamp desc</option>
+              <option value="timestamp" <% if(search.orderBy == "timestamp") { %>selected <% } %>>Order by Timestamp asc</option>
+              <option value="readingTimeDesc" <% if(search.orderBy == "readingTimeDesc") { %>selected <% } %>>Order by Read Time desc</option>
+              <option value="readingTime" <% if(search.orderBy == "readingTime") { %>selected <% } %>>Order by Read Time asc</option>
+              <option value="readCountDesc" <% if(search.orderBy == "readCountDesc") { %>selected <% } %>>Order by Read Count desc</option>
+              <option value="readCount" <% if(search.orderBy == "readCount") { %>selected <% } %>>Order by Read Count asc</option>
+            </select>
+          </div>
+          <div class="col-auto">
+            <button type="submit" class="btn btn-success">Search</button>
+          </div>
+        </div>
+      </form>
+    </div>
+
+    <br />
+
+    <div class="container">
+      <nav aria-label="Page navigation example">
+        <ul class="pagination justify-content-end">
+          <li class="page-item">
+            <a class="page-link" onclick="goPage(<%= search.prevPage %>)" href="#">Previous</a>
+          </li>
+          <li class="page-item">
+            <a class="page-link" onclick="goPage(<%= search.nextPage %>)" href="#">Next</a>
+          </li>
+        </ul>
+      </nav>
+    </div>
+
+    <% blogs.forEach(blogPost => { %> 
+    <div class="container card">
+      <div class="card-body">
+        <h5 class="card-title"><%= blogPost.title %></h5>
+        <h6 class="card-subtitle mb-2 text-muted">Views: <%= blogPost.readCount %></h6>
+        <h6 class="card-subtitle mb-2 text-muted">By: <%= blogPost.author.firstName %> <%= blogPost.author.lastName %></h6>
+        <h6 class="card-subtitle mb-2 text-muted">Reading Time: <%= blogPost.readingTime %> minute(s)</h6>
+        <h6 class="card-subtitle mb-2 text-muted">Date: <%= blogPost.timestamp.toLocaleString() %></h6>
+        
+        <br />
+
+        <p class="card-title"><%= blogPost.body.slice(0, 500) %>...</p>
+
+        <br />
+
+        <a href="/blogs/<%= blogPost._id %>/view" class="btn btn-secondary">Read More</a>
+
+        <br />
+
+        <% if(typeof user != "undefined" && user) { %>
+          <form method="POST" action="/blogs/<%= blogPost._id %>/delete">
+            <a href="/blogs/<%= blogPost._id %>/edit" class="btn btn-primary">Edit</a>
+            <button type="submit" class="btn btn-danger">Delete</button>
+          </form>
+        <% } %>
+      </div>
+    </div>
+    <br />
+    <% }) %>  
+</body>
+</html>

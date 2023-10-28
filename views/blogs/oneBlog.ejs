@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
+    <title><%= blog.title %> | View Blog</title>
+</head>
+<body>
+    <%- include("_navbar") %>
+ 
+    <div class="container">
+      <h1 class="mb-4 mt-3"><%= blog.title %></h1>
+    </div>
+
+    <div class="container">
+        <div class="card">
+            <div class="card-body">
+              <h6 class="card-subtitle mb-2 text-muted">Views: <%= blog.readCount %></h6>
+              <h6 class="card-subtitle mb-2 text-muted">By: <%= blog.author.firstName %> <%= blog.author.lastName %></h6>
+              <h6 class="card-subtitle mb-2 text-muted">Reading Time: <%= blog.readingTime %> minute(s)</h6>
+              <h6 class="card-subtitle mb-2 text-muted">Date: <%= blog.timestamp.toLocaleString() %></h6>
+
+              <div class="card-body">
+                <%= blog.body %>
+              </div>
+              <p class="text-muted"><%= blog.postedAt %></p>
+            </div>
+          </div>
+    </div>
+</body>
+</html>
